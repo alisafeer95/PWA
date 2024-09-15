@@ -1,0 +1,106 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+---
+
+
+<Layout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, white, #87CEEB);
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        .container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .container input[type="email"],
+        .container input[type="text"],
+        .container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .container button:hover {
+            background-color: #007bb5;
+        }
+
+        .container .login-btn {
+            background-color: #4CAF50;
+        }
+
+        .container .login-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <form class='sign-up'>
+            <input type="email" id="email" name="email" placeholder="Email" required><br>
+            <input type="text" id="username" name="username" placeholder="Username" required><br>
+            <input type="password" id="password" name="password" placeholder="Password" required><br>
+            <button type="submit">Sign Up</button>
+            <button type="button" class="login-btn" onClick="window.location.href='/'">Back to Login</button>
+        </form>
+    </div>
+
+    <script>
+      import {authUser} from "../helpers/user"
+        const form = document.querySelector('.sign-up');
+        
+        // Add event listener to handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            await authUser(formData, 'sign_up');
+        });
+
+        // Define the sign-up function
+        function signUpFunction() {
+            window.location.href = '/signup';
+        }
+    </script>
+</body>
+</html>
+<Layout>
+
+

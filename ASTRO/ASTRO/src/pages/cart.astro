@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .cart-container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .cart-item h4 {
+      margin: 0;
+    }
+    .remove-btn {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="cart-container">
+  <h2>User's Cart</h2>
+  <div id="cart-items"></div>
+</div>
+
+<script>
+import { updateCart } from '../helpers/cart';
+  // Function to fetch user's cart
+  async function fetchUserCart() {
+    try {
+      const response = await fetch(`${import.meta.env.PUBLIC_SERVER_URL}/api/users/me/?populate=*`, {
+        headers: new Headers({
+          Authorization: `Bearer ${document.cookie.slice(10)}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch cart");
+      }
+
+      const data = await response.json();
+      displayCartItems(data.cart);
+    } catch (error) {
+      console.error(error);
+      document.getElementById('cart-items').innerHTML = `<p>Error loading cart. Please sign in!</p>`;
+    }
+  }
+
+  // Function to display cart items
+  function displayCartItems(cart) {
+    const cartItemsContainer = document.getElementById('cart-items');
+
+    if ( cart==null) {
+      cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+      return;
+    }
+
+    cartItemsContainer.innerHTML = ''; // Clear previous content
+
+    cart.forEach(item => {
+      const cartItemDiv = document.createElement('div');
+      cartItemDiv.classList.add('cart-item');
+
+      cartItemDiv.innerHTML = `
+        <h4>${item.Title}</h4>
+        <astro-greet data-message=${item.id}>
+        <button class="remove-btn" >Remove</button>
+        </astro-greet>
+      `;
+
+      cartItemsContainer.appendChild(cartItemDiv);
+    });
+
+    
+  }
+
+ class AstroGreet extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector('.remove-btn');
+       button.addEventListener("click", async (e) => {
+         const productId = this.dataset.message;
+         await removeFromCart(productId)
+  });
+    }
+  }
+
+  customElements.define('astro-greet', AstroGreet);
+
+ async function removeFromCart(productId) {
+    await updateCart("delete", productId);
+    await fetchUserCart(); // Reload cart after removing the item
+  }
+
+  // Initial fetch of user's cart when the page loads
+ await fetchUserCart();
+</script>
+
+</body>
+</html>

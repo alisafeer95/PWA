@@ -1,0 +1,48 @@
+---
+const { product } = Astro.props;
+  import { updateCart } from '../helpers/cart';
+
+
+
+---
+
+<div class="product-card">
+  <h2>{product.attributes.Title}</h2>
+  <h3>{product.attributes.Product_Category}</h3>
+  <h4>{product.attributes.Price}$</h4>
+  <img src={product.attributes.Image.data.attributes.formats.thumbnail.url} alt={product.attributes.Title} />
+   <astro-greet data-message={product.id}>
+  <button type="button" class="view-details">View Details</button>
+  </astro-greet>
+</div>
+
+<style>
+  .product-card {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 300px;
+     background-color: #f5f5f5; /* Light gray background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: box-shadow 0.3s ease; /* Smooth transition on hover */
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+<script >
+  class AstroGreet extends HTMLElement {
+    connectedCallback() {
+      // Read the message from the data attribute.
+      console.log(this.dataset.message.id)
+      const button = this.querySelector('.view-details');
+       button.addEventListener("click", async (e) => {
+         window.location.href = `/products/${this.dataset.message}`;
+  });
+    }
+  }
+  customElements.define('astro-greet', AstroGreet);
+</script>
